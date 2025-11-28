@@ -248,7 +248,7 @@ impl PackageManagerApp {
     }
     pub fn load_packages_from_xml(&mut self) {
         if !self.packages.is_empty() {
-            return; // Zaten yüklü
+            return;
         }
 
         println!("Loading packages from local Pisi repository...");
@@ -256,13 +256,28 @@ impl PackageManagerApp {
         match XmlParser::load_pisi_index() {
             Ok(packages) => {
                 self.packages = packages;
+                
+                // Önce normal parsing'i dene
                 self.components = XmlParser::parse_components(&self.packages);
+                
+                // Eğer sadece 2 component varsa (sadece All ve Unknown), manuel parsing kullan
+                if self.components.len() <= 2 {
+                    println!("Normal parsing failed, using manual component detection...");
+                    self.components = XmlParser::parse_components_manual(&self.packages);
+                }
+                
                 println!("Successfully loaded {} packages, {} components", 
                          self.packages.len(), self.components.len());
                 
-                // Debug: İlk birkaç paketi göster
+                // İlk birkaç paketi ve component'leri göster
+                println!("First 5 packages:");
                 for pkg in self.packages.iter().take(5) {
-                    println!("  - {}: {} ({})", pkg.name, pkg.summary, pkg.part_of);
+                    println!("  - {}: {} (partOf: {})", pkg.name, pkg.summary, pkg.part_of);
+                }
+                
+                println!("Components:");
+                for comp in &self.components {
+                    println!("  - {}: {} packages", comp.name, comp.package_count);
                 }
             }
             Err(e) => {
