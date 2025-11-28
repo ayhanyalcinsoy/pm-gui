@@ -120,13 +120,26 @@ impl XmlParser {
         let mut component_counts: HashMap<String, usize> = HashMap::new();
         
         for package in packages {
-            *component_counts.entry(package.part_of.clone()).or_insert(0) += 1;
+            let component_name = if package.part_of == "Unknown" || package.part_of.is_empty() {
+                "other".to_string()
+            } else {
+                package.part_of.clone()
+            };
+            
+            *component_counts.entry(component_name).or_insert(0) += 1;
+        }
+
+        println!("Found {} unique components", component_counts.len());
+        
+        // Component'leri listele
+        for (name, count) in &component_counts {
+            println!("Component: {} ({} packages)", name, count);
         }
 
         let mut components: Vec<Component> = component_counts
             .into_iter()
             .map(|(name, count)| Component {
-                name: if name == "Unknown" { "Other".to_string() } else { name },
+                name: name.clone(),
                 package_count: count,
             })
             .collect();
@@ -138,12 +151,8 @@ impl XmlParser {
             package_count: total_packages,
         });
 
-        // Sistem bileşenlerini en üste al
-        components.sort_by(|a, b| {
-            if a.name == "system" { std::cmp::Ordering::Less }
-            else if b.name == "system" { std::cmp::Ordering::Greater }
-            else { a.name.cmp(&b.name) }
-        });
+        // Alfabetik sırala
+        components.sort_by(|a, b| a.name.cmp(&b.name));
         
         components
     }
