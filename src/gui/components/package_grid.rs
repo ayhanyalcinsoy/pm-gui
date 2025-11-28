@@ -42,111 +42,15 @@ impl PackageGrid {
         });
     }
 
-    fn render_package_card(&self, ui: &mut egui::Ui, package_index: usize) {
-        // Mock package data based on index
-        let package = match package_index {
-            0 => MockPackage {
-                name: "Firefox".to_string(),
-                description: "Web browser".to_string(),
-                version: "115.0".to_string(),
-                installed_version: Some("114.0".to_string()),
-                icon: "🦊",
-                is_installed: true,
-                has_update: true,
-            },
-            1 => MockPackage {
-                name: "Libreoffice".to_string(),
-                description: "Office Software".to_string(),
-                version: "7.5.0".to_string(),
-                installed_version: Some("7.5.0".to_string()),
-                icon: "📊",
-                is_installed: true,
-                has_update: false,
-            },
-            2 => MockPackage {
-                name: "Vlc".to_string(),
-                description: "Multimedia Player".to_string(),
-                version: "3.0.18".to_string(),
-                installed_version: None,
-                icon: "🎬",
-                is_installed: false,
-                has_update: false,
-            },
-            3 => MockPackage {
-                name: "Konsole".to_string(),
-                description: "KDE Terminal".to_string(),
-                version: "22.12.0".to_string(),
-                installed_version: Some("22.12.0".to_string()),
-                icon: "💻",
-                is_installed: true,
-                has_update: false,
-            },
-            4 => MockPackage {
-                name: "Gimp".to_string(),
-                description: "Image Editor".to_string(),
-                version: "2.10.32".to_string(),
-                installed_version: None,
-                icon: "🎨",
-                is_installed: false,
-                has_update: false,
-            },
-            _ => MockPackage {
-                name: "Thunderbird".to_string(),
-                description: "Email Client".to_string(),
-                version: "115.0".to_string(),
-                installed_version: Some("114.0".to_string()),
-                icon: "📧",
-                is_installed: true,
-                has_update: true,
-            },
-        };
-
-        egui::Frame::group(ui.style()).show(ui, |ui| {
-            ui.vertical(|ui| {
-                // Package header
-                ui.horizontal(|ui| {
-                    ui.label(package.icon);
-
-                    ui.vertical(|ui| {
-                        ui.heading(&package.name);
-                        ui.label(&package.description);
-                    });
-                });
-
-                // Version info
-                ui.label(format!("Version: {}", package.version));
-
-                if let Some(installed) = &package.installed_version {
-                    ui.label(format!("Installed: {}", installed));
-                }
-
-                // Action buttons
-                ui.horizontal(|ui| {
-                    if package.is_installed {
-                        if package.has_update {
-                            if ui.button("🔄 Update").clicked() {
-                                if let Err(e) = PackageManager::update_package(&package.name) {
-                                    eprintln!("Update error: {}", e);
-                                }
-                            }
-                        }
-
-                        if ui.button("🗑️ Remove").clicked() {
-                            if let Err(e) = PackageManager::remove_package(&package.name) {
-                                eprintln!("Remove error: {}", e);
-                            }
-                        }
-                    } else {
-                        if ui.button("📥 Install").clicked() {
-                            if let Err(e) = PackageManager::install_package(&package.name) {
-                                eprintln!("Install error: {}", e);
-                            }
-                        }
-                    }
-                });
-            });
-        });
-    }
+    [dependencies]
+eframe = "0.27"
+egui = "0.27"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+roxmltree = "0.19"
+anyhow = "1.0"
+image = { version = "0.24", default-features = false, features = ["png"] }
+# minreq kaldırıldı - artık HTTP isteği yapmıyoruz
 }
 
 // Mock package structure for demonstration
