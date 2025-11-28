@@ -258,18 +258,25 @@ impl PackageManagerApp {
                 self.packages = packages;
                 self.components = XmlParser::parse_components(&self.packages);
                 
-                println!("Successfully loaded {} packages, {} components", 
-                         self.packages.len(), self.components.len());
+                println!("=== PACKAGE LOADING SUMMARY ===");
+                println!("Total packages loaded: {}", self.packages.len());
+                println!("Total components found: {}", self.components.len());
                 
-                // İlk birkaç paketi ve component'leri göster
-                println!("First 5 packages:");
-                for pkg in self.packages.iter().take(5) {
-                    println!("  - {}: {} (partOf: {})", pkg.name, pkg.summary, pkg.part_of);
-                }
-                
-                println!("All components:");
+                // Component'leri göster
+                println!("\nComponents:");
                 for comp in &self.components {
                     println!("  - {}: {} packages", comp.name, comp.package_count);
+                }
+                
+                // İlk 5 paketi detaylı göster
+                println!("\nFirst 5 packages (detailed):");
+                for pkg in self.packages.iter().take(5) {
+                    println!("  - {}", pkg.name);
+                    println!("    Summary: {}", pkg.summary);
+                    println!("    Version: {}", pkg.version);
+                    println!("    PartOf: {}", pkg.part_of);
+                    println!("    License: {}", pkg.license);
+                    println!();
                 }
             }
             Err(e) => {
