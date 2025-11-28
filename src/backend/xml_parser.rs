@@ -61,7 +61,6 @@ impl XmlParser {
         Self::parse_pisi_index(&xml_content)
     }
 
-    impl XmlParser {
     pub fn parse_pisi_index(xml_content: &str) -> Result<Vec<PackageInfo>> {
         let doc = Document::parse(xml_content)?;
         let mut packages = Vec::new();
