@@ -201,13 +201,6 @@ impl XmlParser {
         components
     }
 
-    fn get_text(node: &roxmltree::Node, tag_name: &str) -> Option<String> {
-        node.descendants()
-            .find(|n| n.has_tag_name(tag_name))
-            .and_then(|n| n.text())
-            .map(|s| s.trim().to_string())
-    }
-
     fn parse_source(node: &roxmltree::Node) -> Option<Source> {
         if let Some(source_node) = node.descendants().find(|n| n.has_tag_name("Source")) {
             let name = source_node.attribute("name").unwrap_or("").to_string();
