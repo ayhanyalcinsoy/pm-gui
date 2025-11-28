@@ -10,12 +10,4 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 roxmltree = "0.19"
 anyhow = "1.0"
-
-# Sistem tema algılama için opsiyonel bağımlılıklar
-[dependencies.dark-light]
-optional = true
-version = "1.1"
-
-[features]
-default = []
-system-theme-detection = ["dark-light"]
+image = { version = "0.24", default-features = false, features = ["png"] }
