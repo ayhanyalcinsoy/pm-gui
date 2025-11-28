@@ -74,14 +74,48 @@ impl PackageManagerApp {
 
     /// Logoları yükle
     fn load_images(&mut self, ctx: &egui::Context) {
+        // Mevcut çalışma dizinini al
+        let current_dir = std::env::current_dir().unwrap_or_default();
+        
+        // Asset path'lerini oluştur
+        let light_logo_path = current_dir.join("assets/pisi-logo-light.png");
+        let dark_logo_path = current_dir.join("assets/pisi-logo-dark.png");
+        let system_icon_path = current_dir.join("assets/package-manager-icon-systemtr.png");
+        
+        println!("Loading images from:");
+        println!("  Light: {}", light_logo_path.display());
+        println!("  Dark: {}", dark_logo_path.display());
+        println!("  System: {}", system_icon_path.display());
+        
         // Light tema logosu
-        let _ = self.image_loader.load_texture(ctx, "assets/pisi-logo-light.png", "pisi_logo_light");
+        if let Ok(path_str) = light_logo_path.clone().into_os_string().into_string() {
+            match self.image_loader.load_texture(ctx, &path_str, "pisi_logo_light") {
+                Ok(()) => println!("✓ Successfully loaded pisi_logo_light"),
+                Err(e) => println!("✗ Failed to load pisi_logo_light: {}", e),
+            }
+        } else {
+            println!("✗ Invalid path for light logo");
+        }
         
         // Dark tema logosu  
-        let _ = self.image_loader.load_texture(ctx, "assets/pisi-logo-dark.png", "pisi_logo_dark");
+        if let Ok(path_str) = dark_logo_path.clone().into_os_string().into_string() {
+            match self.image_loader.load_texture(ctx, &path_str, "pisi_logo_dark") {
+                Ok(()) => println!("✓ Successfully loaded pisi_logo_dark"),
+                Err(e) => println!("✗ Failed to load pisi_logo_dark: {}", e),
+            }
+        } else {
+            println!("✗ Invalid path for dark logo");
+        }
         
         // Sistem ikonu
-        let _ = self.image_loader.load_texture(ctx, "assets/package-manager-icon-systemtr.png", "system_tray_icon");
+        if let Ok(path_str) = system_icon_path.clone().into_os_string().into_string() {
+            match self.image_loader.load_texture(ctx, &path_str, "system_tray_icon") {
+                Ok(()) => println!("✓ Successfully loaded system_tray_icon"),
+                Err(e) => println!("✗ Failed to load system_tray_icon: {}", e),
+            }
+        } else {
+            println!("✗ Invalid path for system icon");
+        }
     }
 
     /// Sistem fontlarını ve stillerini ayarla
