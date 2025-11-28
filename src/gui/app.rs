@@ -1,6 +1,6 @@
 use eframe::egui;
 use crate::config::{AppSettings, Theme};
-use crate::backend::xml_parser::{XmlParser, PackageInfo, Source};
+use crate::backend::xml_parser::{XmlParser, PackageInfo, Component, Source}; // Component ve Source'u da import et
 use crate::gui::components::{Sidebar, PackageGrid, PackageDetails};
 use crate::gui::components::settings_modal;
 use crate::config::SettingsModalState;
@@ -38,6 +38,8 @@ pub struct PackageManagerApp {
     // Image loader
     pub image_loader: ImageLoader,
 }
+
+// ... geri kalan kod aynı kalacak ...
 
 impl PackageManagerApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
