@@ -1,6 +1,6 @@
 use eframe::egui;
 use crate::config::{AppSettings, Theme};
-use crate::backend::xml_parser::{XmlParser, PackageInfo, Component};
+use crate::backend::xml_parser::{XmlParser, PackageInfo, Source};
 use crate::gui::components::{Sidebar, PackageGrid, PackageDetails};
 use crate::gui::components::settings_modal;
 use crate::config::SettingsModalState;
