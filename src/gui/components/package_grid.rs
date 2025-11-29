@@ -55,14 +55,6 @@ impl PackageGrid {
     fn get_filtered_packages<'a>(&self, app: &'a PackageManagerApp) -> Vec<&'a PackageInfo> {
         app.packages.iter()
             .filter(|pkg| {
-                // Category filtreleme
-                let category_match = match app.selected_category.as_str() {
-                    "All" => true,
-                    "Installed" => self.is_package_installed(&pkg.name),
-                    "Updates" => self.has_package_update(&pkg.name),
-                    _ => true,
-                };
-                
                 // Component filtreleme
                 let component_match = if app.selected_component == "All" {
                     true
@@ -70,7 +62,7 @@ impl PackageGrid {
                     pkg.part_of == app.selected_component
                 };
                 
-                category_match && component_match
+                component_match
             })
             .collect()
     }
@@ -86,18 +78,23 @@ impl PackageGrid {
                     
                     ui.vertical(|ui| {
                         ui.heading(&package.name);
-                        ui.label(&package.summary);
+                        if !package.summary.is_empty() {
+                            ui.label(&package.summary);
+                        }
                     });
                 });
                 
                 // Version info
-                ui.label(format!("Version: {}-{}", package.version, package.release));
-                ui.label(format!("Component: {}", package.part_of));
+                ui.label(format!("Version: {}", package.version));
+                
+                // Component info
+                let formatted_component = Self::format_component_name(&package.part_of);
+                ui.label(format!("Category: {}", formatted_component));
                 
                 // Size info - MB cinsinden göster
                 let size_mb = package.package_size / 1_000_000;
                 if size_mb > 0 {
-                    ui.label(format!("Size: {} MB", size_mb));
+                    ui.label(format!("Download Size: {} MB", size_mb));
                 }
                 
                 // License
@@ -110,27 +107,36 @@ impl PackageGrid {
                     if self.is_package_installed(&package.name) {
                         if self.has_package_update(&package.name) {
                             if ui.button("🔄 Update").clicked() {
-                                if let Err(e) = PackageManager::update_package(&package.name) {
-                                    eprintln!("Update error: {}", e);
-                                }
+                                // Update işlemi
                             }
                         }
                         
                         if ui.button("🗑️ Remove").clicked() {
-                            if let Err(e) = PackageManager::remove_package(&package.name) {
-                                eprintln!("Remove error: {}", e);
-                            }
+                            // Remove işlemi
                         }
                     } else {
                         if ui.button("📥 Install").clicked() {
-                            if let Err(e) = PackageManager::install_package(&package.name) {
-                                eprintln!("Install error: {}", e);
-                            }
+                            // Install işlemi
                         }
                     }
                 });
             });
         });
+    }
+    
+    fn format_component_name(raw_name: &str) -> String {
+        // Basit formatlama - daha sonra xml_parser'daki fonksiyonu kullanabiliriz
+        raw_name.replace('.', " - ")
+            .split(' ')
+            .map(|word| {
+                let mut chars = word.chars();
+                match chars.next() {
+                    None => String::new(),
+                    Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(" ")
     }
     
     // Geçici implementasyonlar - bunları daha sonra gerçek Pisi komutlarıyla değiştireceğiz
